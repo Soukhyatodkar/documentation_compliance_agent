@@ -12,7 +12,7 @@ aiohttp==3.9.1
 asyncio==3.4.3
 
 # Vector Database & Embeddings
-qdrant-client==2.7.0
+qdrant-client==1.18.0
 openai==1.6.0
 numpy==1.24.3
 
