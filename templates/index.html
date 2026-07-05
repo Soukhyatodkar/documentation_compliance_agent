@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Compliance Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .status-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-family: monospace;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .value {
+            color: #333;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: width 0.3s ease;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .report-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .report-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .report-info {
+            flex: 1;
+        }
+
+        .report-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .report-meta {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.85em;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .status-badge.running {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-badge.idle {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        .status-badge.completed {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .status-badge.error {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Documentation Compliance Agent</h1>
+            <p class="subtitle">Automated compliance checking for web applications</p>
+        </header>
+
+        <div class="grid">
+            <!-- Status Panel -->
+            <div class="card">
+                <h2>System Status</h2>
+                <div class="alert alert-info" id="infoAlert"></div>
+                
+                <div class="status-box">
+                    <div class="status-item">
+                        <span class="label">Status:</span>
+                        <span class="value"><span id="statusBadge" class="status-badge idle">Idle</span></span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Stage:</span>
+                        <span class="value" id="stageValue">Ready</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Progress:</span>
+                        <span class="value" id="progressValue">0%</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Duration:</span>
+                        <span class="value" id="durationValue">-</span>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%;">0%</div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" id="runBtn" onclick="runPipeline()">Run Audit</button>
+                    <button class="btn-danger" id="stopBtn" onclick="stopPipeline()" disabled>Stop</button>
+                </div>
+
+                <button class="btn-secondary" style="width: 100%;" onclick="refreshStatus()">Refresh</button>
+            </div>
+
+            <!-- Configuration Panel -->
+            <div class="card">
+                <h2>Configuration</h2>
+                
+                <label>Select Configuration:</label>
+                <select id="configSelect" onchange="loadConfig()">
+                    <option value="">Loading configurations...</option>
+                </select>
+
+                <div class="controls">
+                    <button class="btn-secondary" onclick="saveConfig()">Save Config</button>
+                    <button class="btn-secondary" onclick="createNewConfig()">New Config</button>
+                </div>
+
+                <textarea id="configEditor" placeholder="Configuration content" style="height: 200px; font-size: 0.9em;"></textarea>
+            </div>
+        </div>
+
+        <!-- Reports Panel -->
+        <div class="card">
+            <h2>Generated Reports</h2>
+            
+            <div class="controls">
+                <button class="btn-secondary" onclick="refreshReports()">Refresh Reports</button>
+                <button class="btn-secondary" onclick="deleteAllReports()">Delete All</button>
+            </div>
+
+            <div class="report-list" id="reportList">
+                <p style="color: #999; text-align: center; padding: 20px;">Loading reports...</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Documentation Compliance Agent v1.0.0 | Production Ready | Backend: Python | Frontend: HTML/CSS/JS</p>
+        </footer>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE = "http://localhost:5000/api";
+
+        // Status update interval
+        let statusInterval = null;
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("Frontend initialized");
+            loadConfigurations();
+            refreshStatus();
+            refreshReports();
+            
+            // Auto-refresh status when running
+            statusInterval = setInterval(() => {
+                if (document.getElementById("statusBadge").classList.contains("running")) {
+                    refreshStatus();
+                }
+            }, 2000);
+        });
+
+        // Load configurations list
+        function loadConfigurations() {
+            fetch(`${API_BASE}/config/list`)
+                .then(r => r.json())
+                .then(data => {
+                    const select = document.getElementById("configSelect");
+                    select.innerHTML = "";
+                    
+                    data.configs.forEach(config => {
+                        const option = document.createElement("option");
+                        option.value = config.name;
+                        option.textContent = config.name;
+                        select.appendChild(option);
+                    });
+                    
+                    if (data.configs.length > 0) {
+                        select.value = data.configs[0].name;
+                        loadConfig();
+                    }
+                })
+                .catch(err => showAlert("Error loading configurations: " + err, "error"));
+        }
+
+        // Load selected configuration
+        function loadConfig() {
+            const configName = document.getElementById("configSelect").value;
+            if (!configName) return;
+            
+            fetch(`${API_BASE}/config/get/${configName}`)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById("configEditor").value = data.content;
+                })
+                .catch(err => showAlert("Error loading config: " + err, "error"));
+        }
+
+        // Save configuration
+        function saveConfig() {
+            const configName = document.getElementById("configSelect").value;
+            const content = document.getElementById("configEditor").value;
+            
+            if (!configName) {
+                showAlert("Please select a configuration", "error");
+                return;
+            }
+            
+            fetch(`${API_BASE}/config/save`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: configName, content })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    showAlert("Configuration saved successfully", "success");
+                    loadConfigurations();
+                })
+                .catch(err => showAlert("Error saving config: " + err, "error"));
+        }
+
+        // Run compliance pipeline
+        function runPipeline() {
+            const configName = document.getElementById("configSelect").value;
+            if (!configName) {
+                showAlert("Please select a configuration", "error");
+                return;
+            }
+            
+            document.getElementById("runBtn").disabled = true;
+            document.getElementById("stopBtn").disabled = false;
+            
+            fetch(`${API_BASE}/run`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ config: `config/${configName}.yaml` })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    showAlert("Pipeline started", "success");
+                    refreshStatus();
+                })
+                .catch(err => {
+                    showAlert("Error starting pipeline: " + err, "error");
+                    document.getElementById("runBtn").disabled = false;
+                    document.getElementById("stopBtn").disabled = true;
+                });
+        }
+
+        // Stop pipeline
+        function stopPipeline() {
+            fetch(`${API_BASE}/stop`, { method: "POST" })
+                .then(r => r.json())
+                .then(() => {
+                    showAlert("Stop signal sent", "info");
+                    refreshStatus();
+                })
+                .catch(err => showAlert("Error stopping pipeline: " + err, "error"));
+        }
+
+        // Refresh status
+        function refreshStatus() {
+            fetch(`${API_BASE}/status`)
+                .then(r => r.json())
+                .then(data => {
+                    const status = data.status;
+                    
+                    // Update badge
+                    const badge = document.getElementById("statusBadge");
+                    badge.className = `status-badge ${status.stage}`;
+                    badge.textContent = status.stage.toUpperCase();
+                    
+                    // Update values
+                    document.getElementById("stageValue").textContent = status.stage;
+                    document.getElementById("progressValue").textContent = status.progress + "%";
+                    
+                    // Update progress bar
+                    const bar = document.getElementById("progressBar");
+                    bar.style.width = status.progress + "%";
+                    bar.textContent = status.progress + "%";
+                    
+                    // Update duration
+                    if (status.duration > 0) {
+                        const mins = Math.floor(status.duration / 60);
+                        const secs = Math.floor(status.duration % 60);
+                        document.getElementById("durationValue").textContent = `${mins}m ${secs}s`;
+                    } else {
+                        document.getElementById("durationValue").textContent = "-";
+                    }
+                    
+                    // Update buttons
+                    if (status.running) {
+                        document.getElementById("runBtn").disabled = true;
+                        document.getElementById("stopBtn").disabled = false;
+                    } else {
+                        document.getElementById("runBtn").disabled = false;
+                        document.getElementById("stopBtn").disabled = true;
+                    }
+                    
+                    // Show message
+                    if (status.message) {
+                        document.getElementById("infoAlert").textContent = status.message;
+                        document.getElementById("infoAlert").classList.add("show");
+                    }
+                })
+                .catch(err => console.error("Error refreshing status:", err));
+        }
+
+        // Refresh reports list
+        function refreshReports() {
+            fetch(`${API_BASE}/reports/list`)
+                .then(r => r.json())
+                .then(data => {
+                    const list = document.getElementById("reportList");
+                    
+                    if (data.reports.length === 0) {
+                        list.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No reports yet</p>';
+                        return;
+                    }
+                    
+                    list.innerHTML = data.reports.map(report => `
+                        <div class="report-item">
+                            <div class="report-info">
+                                <div class="report-name">${report.name}</div>
+                                <div class="report-meta">${report.type.toUpperCase()} | ${report.size_kb} KB | ${new Date(report.created).toLocaleString()}</div>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn-small btn-secondary" onclick="viewReport('${report.name}')">View</button>
+                                <button class="btn-small btn-success" onclick="downloadReport('${report.name}')">Download</button>
+                            </div>
+                        </div>
+                    `).join("");
+                })
+                .catch(err => console.error("Error loading reports:", err));
+        }
+
+        // View report
+        function viewReport(filename) {
+            alert("Opening report: " + filename + "\nFull view not implemented in this demo");
+        }
+
+        // Download report
+        function downloadReport(filename) {
+            window.location.href = `/api/reports/download/${filename}`;
+        }
+
+        // Show alert
+        function showAlert(message, type = "info") {
+            const alert = document.getElementById("infoAlert");
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            setTimeout(() => alert.classList.remove("show"), 5000);
+        }
+
+        // Utility functions
+        function createNewConfig() {
+            alert("Create new config feature not implemented yet");
+        }
+
+        function deleteAllReports() {
+            if (confirm("Are you sure you want to delete all reports?")) {
+                alert("Delete all reports feature not implemented yet");
+            }
+        }
+    </script>
+</body>
+</html>

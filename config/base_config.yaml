@@ -1,0 +1,229 @@
+# ============================================================================
+# Documentation Compliance Agent - Base Configuration
+# ============================================================================
+# This is the base configuration. Override values in environment-specific
+# configs or via environment variables.
+# ============================================================================
+
+app:
+  name: Documentation Compliance Agent
+  version: "1.0.0"
+  description: "Automated compliance checking for web applications against documentation"
+  debug: false
+  dry_run: false
+  strict_mode: false
+
+# ============================================================================
+# LLM Configuration
+# ============================================================================
+llm:
+  provider: openai
+  model: gpt-4
+  temperature: 0.7
+  max_tokens: 2000
+  api_key: ${OPENAI_API_KEY}
+  timeout: 60
+  max_retries: 3
+
+# ============================================================================
+# Embedding Configuration
+# ============================================================================
+embeddings:
+  provider: openai
+  model: text-embedding-3-small
+  dimensions: 1536
+  api_key: ${OPENAI_API_KEY}
+  batch_size: 50
+  cache_enabled: true
+  cache_ttl_hours: 24
+
+# ============================================================================
+# Vector Database (Qdrant)
+# ============================================================================
+vector_db:
+  type: qdrant
+  url: ${QDRANT_URL:http://localhost:6333}
+  api_key: ${QDRANT_API_KEY:}
+  collection_name: ${QDRANT_COLLECTION_NAME:guidelines}
+  vector_size: 1536
+  distance_metric: cosine
+  timeout: 30
+  chunk_size: 500
+  similarity_threshold: 0.7
+
+# ============================================================================
+# Website Configuration
+# ============================================================================
+website:
+  url: ${WEBSITE_URL:https://example.com}
+  username: ${WEBSITE_USERNAME:}
+  password: ${WEBSITE_PASSWORD:}
+  login_url: ${WEBSITE_LOGIN_URL:}
+  
+  # Authentication settings
+  authentication:
+    type: ${AUTH_TYPE:none}  # none, basic, form, oauth2
+    cookie_name: ${AUTH_COOKIE_NAME:}
+    token_header: ${AUTH_TOKEN_HEADER:Authorization}
+    token_value: ${AUTH_TOKEN_VALUE:}
+    session_timeout_minutes: 30
+    
+  # Crawling settings
+  crawling:
+    max_pages: 100
+    max_links: 500
+    skip_urls:
+      - logout
+      - signout
+      - "delete.*account"
+      - "admin.*"
+    allowed_url_patterns: []  # Empty = all allowed
+    follow_external_links: false
+    
+  # Extraction settings
+  extraction:
+    wait_for_selectors: []
+    execute_js: null
+    scroll_behavior: full  # none, auto, full, lazy
+    
+# ============================================================================
+# Browser Configuration (Playwright)
+# ============================================================================
+browser:
+  type: ${BROWSER_TYPE:chromium}  # chromium, firefox, webkit
+  headless: ${BROWSER_HEADLESS:true}
+  viewport:
+    width: 1280
+    height: 720
+  
+  timeouts:
+    page_load: 30000  # milliseconds
+    element_wait: 10000
+    navigation: 30000
+    
+  screenshots:
+    enabled: true
+    full_page: true
+    element_screenshots: true
+    quality: 90  # 1-100
+    format: png  # png, jpeg
+    directory: ${SCREENSHOT_DIR:./data/screenshots}
+    
+  js_enabled: true
+  user_agent: null  # null = default
+  proxy: ${PROXY_URL:}
+  disable_images: false
+  
+# ============================================================================
+# PDF Configuration
+# ============================================================================
+pdf:
+  path: ${PDF_PATH:./data/pdfs/guidelines.pdf}
+  strategy: semantic  # simple, smart, semantic
+  
+  # Chunking settings
+  chunking:
+    min_chunk_size: 100
+    max_chunk_size: 1000
+    overlap: 100
+    preserve_headings: true
+    preserve_metadata: true
+    
+  # Extraction settings
+  extract_tables: true
+  extract_images: false
+  extract_metadata: true
+  
+# ============================================================================
+# Retry Configuration
+# ============================================================================
+retry:
+  max_retries: 3
+  initial_delay_ms: 1000
+  backoff_multiplier: 2.0
+  max_delay_ms: 30000
+  exponential: true
+  jitter: true
+
+# ============================================================================
+# Coverage Configuration
+# ============================================================================
+coverage:
+  min_coverage_percentage: 80
+  track_failed_pages: true
+  track_auth_failures: true
+  track_extraction_failures: true
+  
+# ============================================================================
+# Output Configuration
+# ============================================================================
+output:
+  base_dir: ${OUTPUT_DIR:./data}
+  reports_dir: ${REPORT_DIR:./data/reports}
+  screenshots_dir: ${SCREENSHOT_DIR:./data/screenshots}
+  extracted_dir: ${EXTRACTED_DIR:./data/extracted}
+  
+# ============================================================================
+# Report Configuration
+# ============================================================================
+reporting:
+  markdown:
+    enabled: true
+    include_table_of_contents: true
+    include_screenshots: true
+    include_timestamps: true
+    
+  json:
+    enabled: true
+    pretty_print: true
+    include_metadata: true
+    
+  html:
+    enabled: true
+    include_screenshots: true
+    interactive_elements: true
+    theme: light  # light, dark
+    
+  common:
+    min_confidence_score: 0.6
+    group_by_severity: true
+    include_coverage_report: true
+    timestamp_format: "%Y-%m-%d %H:%M:%S"
+    
+# ============================================================================
+# Logging Configuration
+# ============================================================================
+logging:
+  level: ${LOG_LEVEL:INFO}  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: ${LOG_FORMAT:structured}  # simple, json, structured
+  file: ${LOG_FILE:./logs/agent.log}
+  
+  rotation:
+    enabled: true
+    max_size_mb: 10
+    backup_count: 5
+    
+  include:
+    sql_queries: false
+    http_requests: false
+    embeddings: false
+    detailed_extraction: false
+    
+# ============================================================================
+# Performance Configuration
+# ============================================================================
+performance:
+  concurrent_workers: 3
+  embedding_batch_size: 50
+  use_embedding_cache: true
+  cache_ttl_hours: 24
+  
+# ============================================================================
+# Advanced Configuration
+# ============================================================================
+advanced:
+  enable_monitoring: true
+  monitoring_port: 8000
+  test_mode: false
+  use_mock_data: false
+  mock_data_file: ./tests/fixtures/mock_data.json

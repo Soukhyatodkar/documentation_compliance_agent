@@ -1,0 +1,21 @@
+# Include base requirements
+-r requirements.txt
+
+# Additional development tools
+ipython==8.18.1
+ipdb==0.13.13
+pytest-xdist==3.5.0  # Parallel test execution
+pytest-timeout==2.2.0
+faker==21.0.0  # Generate fake data for testing
+responses==0.24.1  # Mock HTTP requests
+freezegun==1.4.0  # Mock datetime
+
+# Pre-commit hooks
+pre-commit==3.5.0
+
+# Documentation generation
+pdoc==14.5.1
+
+# Development utilities
+watchdog==3.0.0
+python-dotenv-cli==3.8.0

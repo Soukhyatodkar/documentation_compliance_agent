@@ -1,0 +1,91 @@
+# ============================================================================
+# Generic Template Configuration
+# ============================================================================
+# Use this as a template to create configuration for any new website.
+# Copy this file, rename it, and update the values below.
+# 
+# To use this config:
+#   cp config/template_config.yaml config/my_website_config.yaml
+#   # Edit config/my_website_config.yaml with your values
+#   python main.py --config config/my_website_config.yaml
+# ============================================================================
+
+extends: base_config.yaml
+
+app:
+  name: Documentation Compliance Agent - Generic Website
+  description: "Automated compliance checking for [WEBSITE_NAME]"
+
+# ---- UPDATE THESE SETTINGS FOR YOUR WEBSITE ----
+website:
+  url: https://example.com  # ← CHANGE TO YOUR WEBSITE URL
+  username: ${WEBSITE_USERNAME:}
+  password: ${WEBSITE_PASSWORD:}
+  login_url: https://example.com/login  # ← CHANGE IF DIFFERENT
+  
+  authentication:
+    type: none  # Change to: form, basic, oauth2, custom if needed
+    cookie_name: session_id
+    
+  crawling:
+    max_pages: 100
+    max_links: 500
+    skip_urls:
+      - logout
+      - signout
+      - delete.*account
+      - admin.*
+    allowed_url_patterns: []  # ← Leave empty to crawl all, or add regex patterns
+      
+  extraction:
+    wait_for_selectors: []  # ← Add CSS selectors if page requires dynamic loading
+    scroll_behavior: full
+
+# ---- UPDATE PDF SETTINGS ----
+pdf:
+  path: ./data/pdfs/guidelines.pdf  # ← CHANGE TO YOUR GUIDELINE PDF
+  strategy: semantic
+  chunking:
+    min_chunk_size: 100
+    max_chunk_size: 1000
+    overlap: 100
+
+# ---- ADJUST BROWSER SETTINGS IF NEEDED ----
+browser:
+  type: chromium
+  headless: true
+  viewport:
+    width: 1280
+    height: 720
+  timeouts:
+    page_load: 30000
+    element_wait: 10000
+  screenshots:
+    enabled: true
+    full_page: true
+    element_screenshots: true
+    quality: 90
+
+# ---- ADJUST RETRY SETTINGS IF NEEDED ----
+retry:
+  max_retries: 3
+  initial_delay_ms: 1000
+  backoff_multiplier: 2.0
+  max_delay_ms: 30000
+
+# ---- REPORTING PREFERENCES ----
+reporting:
+  markdown:
+    enabled: true
+    include_screenshots: true
+  json:
+    enabled: true
+  html:
+    enabled: true
+    include_screenshots: true
+  common:
+    min_confidence_score: 0.6
+
+logging:
+  level: INFO
+  file: ./logs/agent.log

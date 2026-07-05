@@ -1,0 +1,87 @@
+# ============================================================================
+# WaiverPro - Example Configuration
+# ============================================================================
+# This configuration demonstrates how to use the agent with WaiverPro.
+# To use this config, run:
+#   python main.py --config config/waiverpo_config.yaml
+# ============================================================================
+
+# Extends base configuration
+extends: base_config.yaml
+
+app:
+  name: Documentation Compliance Agent - WaiverPro
+  description: "Automated compliance checking for WaiverPro"
+
+# Override website configuration for WaiverPro
+website:
+  url: https://waiverpo.example.com
+  username: ${WAIVERPO_USERNAME:}
+  password: ${WAIVERPO_PASSWORD:}
+  login_url: https://waiverpo.example.com/login
+  
+  authentication:
+    type: form
+    cookie_name: session_id
+    
+  crawling:
+    max_pages: 150
+    max_links: 1000
+    skip_urls:
+      - logout
+      - signout
+      - delete.*account
+      - admin.*
+      - api/.*
+    allowed_url_patterns:
+      - "^https://waiverpo\\.example\\.com"
+      
+  extraction:
+    wait_for_selectors:
+      - .main-container
+      - .page-content
+      - .navbar
+    scroll_behavior: full
+
+# Override PDF configuration for WaiverPro guidelines
+pdf:
+  path: ${WAIVERPO_PDF_PATH:./data/pdfs/waiverpo_guidelines.pdf}
+  strategy: semantic
+  chunking:
+    min_chunk_size: 150
+    max_chunk_size: 1200
+    overlap: 150
+
+# Browser configuration for WaiverPro
+browser:
+  type: chromium
+  headless: true
+  viewport:
+    width: 1920
+    height: 1080
+  screenshots:
+    full_page: true
+    element_screenshots: true
+    quality: 95
+
+# Retry configuration - be more aggressive for WaiverPro
+retry:
+  max_retries: 5
+  initial_delay_ms: 2000
+  backoff_multiplier: 2.0
+  max_delay_ms: 60000
+
+# Reporting for WaiverPro
+reporting:
+  markdown:
+    enabled: true
+    include_screenshots: true
+  json:
+    enabled: true
+  html:
+    enabled: true
+    include_screenshots: true
+
+logging:
+  level: INFO
+  file: ./logs/waiverpo_agent.log

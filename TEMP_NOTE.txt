@@ -1,0 +1,5 @@
+Temporary note: Identified mismatch causing pytest ImportError.
+- src/agent/compliance_agent.py defines ComparisonStatus.
+- src/data/models.py defines ComplianceStatus, but not ComparisonStatus.
+- tests/unit/test_cli.py imports ComparisonStatus from src.data.models.
+Next fix should export/add ComparisonStatus to src/data/models.py or adjust tests/imports.
