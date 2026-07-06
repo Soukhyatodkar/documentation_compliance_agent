@@ -29,7 +29,7 @@ from src.core.exceptions import (
     ConfigurationError,
     ProcessingError,
 )
-from src.data.models import ComparisonResult, Discrepancy, WebComponent, ComparisonStatus
+from src.data.models import ComparisonResult, Discrepancy, WebComponent, ComplianceStatus
 
 runner = CliRunner()
 

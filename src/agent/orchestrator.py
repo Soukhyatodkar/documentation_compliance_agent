@@ -369,7 +369,63 @@ class ComplianceOrchestrator:
             comparison_timestamp=datetime.now(),
         )
 
+    async def extract_and_check_website(self, coverage_tracker=None):
+        """
+        Extract website and run full compliance check pipeline.
+        
+        This is the complete end-to-end pipeline:
+        1. Initialize web extractor
+        2. Extract website (login, navigate, capture components)
+        3. Store extracted data
+        4. Run compliance checks
+        5. Return results
+        
+        Args:
+            coverage_tracker: Optional coverage tracker for progress
+            
+        Returns:
+            Dictionary with extraction results and compliance findings
+        """
+        from src.web_extraction.extractor import WebExtractor
+        
+        try:
+            # Initialize web extractor
+            extractor = WebExtractor(self._config, coverage_tracker)
+            
+            logger.info("Starting website extraction and compliance check")
+            
+            # Extract website
+            extraction = await extractor.extract_website()
+            logger.info(f"Website extraction complete: {len(extraction.pages)} pages")
+            
+            # Process each page for compliance
+            all_results = {}
+            total_discrepancies = 0
+            
+            for page in extraction.pages:
+                try:
+                    # Check this page for compliance
+                    result = await self.check_page(page, page.components)
+                    all_results[page.url] = result
+                    total_discrepancies += len(result.discrepancies)
+                    
+                except Exception as e:
+                    logger.error(f"Compliance check failed for {page.url}: {str(e)}")
+            
+            return {
+                "extraction": extraction,
+                "compliance_results": all_results,
+                "total_discrepancies": total_discrepancies,
+                "total_pages": len(extraction.pages),
+                "pages_with_issues": sum(1 for r in all_results.values() if r.discrepancies)
+            }
+            
+        except Exception as e:
+            logger.error(f"End-to-end pipeline failed: {str(e)}")
+            raise
+
     def get_statistics(self) -> Dict[str, Any]:
+
         """Get orchestrator statistics."""
         return {
             "processed_components": self._processed_components,

@@ -29,7 +29,7 @@ from src.data.models import (
     SeverityLevel,
     ComponentType,
     DiscrepancyType,
-    ComparisonStatus,
+    ComplianceStatus,
 )
 from src.core.exceptions import ReportGenerationError
 
