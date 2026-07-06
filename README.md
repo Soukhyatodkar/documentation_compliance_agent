@@ -449,6 +449,10 @@ documentation-compliance-agent/
 
 ## Known Limitations
 
+- The GitHub Actions documentation workflow assumes an MkDocs configuration, which is not included because the project uses a README-based documentation approach.
+- The CI pipeline may require environment-specific adjustments for the Qdrant service container and platform-specific dependencies.
+- The application has been developed and validated locally; CI configuration can be further refined for production use.
+
 1. **Large PDFs**: Processing 500+ page PDFs may take longer
 2. **Dynamic Content**: SPAs require explicit wait selectors
 3. **CAPTCHA**: Not handled – may need manual intervention
